@@ -19,7 +19,7 @@ using namespace std;
     Resizes the list of nodes (\ref values) and also resets all values.
     After this function is called \ref values has size *n* and contains random numbers (normal distribution, mean=0, sd=1).
  */
-    void Network::resize(const size_t& new_size){
+void Network::resize(const size_t& new_size){
 		values.clear();
 		for (size_t i(0); i< new_size; i++){
 			values.push_back(RNG.normal(0,1));
@@ -58,18 +58,30 @@ bool Network::add_link (const size_t& Nodea, const size_t& Nodeb){
 		size_t counter(0);
 		vector<size_t> othernodes;
 		
+		
 		for (size_t i(0); i< values.size(); i++){
 			othernodes.push_back (i);
 		}
 		
 		for (size_t i(0); i < values.size(); i++){
 			size_t NBofnodes (RNG.poisson(mean_deg));
-			RNG.shuffle(othernodes);
-			for (size_t j(0); j< NBofnodes; j++){
-		        add_link (i , othernodes[j]);
-		        counter++;
+			if (NBofnodes >= size()){ //Plafonne le nombre maximale de nodes
+				NBofnodes = size() -1;
+				}
+			RNG.shuffle(othernodes); 
+			//On va shuffle le tableau othernodes et
+			//choisir les Nbofnode premières valeurs 
+			//afin de ne jamais prendre deux vois le meme nodes
+			size_t indexofnodes (0);
+			for (size_t j(0); j < NBofnodes; j++){
+				while ((indexofnodes < size()) and not (add_link (i , othernodes[indexofnodes]))){
+					++indexofnodes;
+					}
+					if (indexofnodes < size()){
+					++counter;
+						}
+					}
 		}
-	}
 	return counter;
 }		  
 		

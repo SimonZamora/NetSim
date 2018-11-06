@@ -15,6 +15,7 @@ int main(int argc, char **argv) {
     } catch(TCLAP::ArgException &e) {
         std::cerr << "Error: " + e.error() + " " + e.argId();
         errcode = 2;
+      
     }
     return errcode;
 }

@@ -3,6 +3,7 @@
 #include "network.h"
 #include <iostream>
 
+
 Simulation::Simulation(Network *_net) : _network(_net), stepnum(10) {}
 
 void Simulation::initialize(int argc, char **argv) {
@@ -15,9 +16,13 @@ void Simulation::initialize(int argc, char **argv) {
     cmd.add(argDegree);
     TCLAP::ValueArg<int> argTime("t", "time", "Number of steps to simulate", false, 10, "int");
     cmd.add(argTime);
-
+	
     cmd.parse(argc, argv);
-
+	
+		if (argNode.getValue() <= argDegree.getValue()){ throw std::invalid_argument("Impossible to make more links than the number of nodes. Put valid argument"); }
+		if (argTime.getValue() <= 0 ){ throw std::invalid_argument("Time must be greater than 0!"); }
+		
+	
     RNG.initialize(argSeed.getValue());
     int nodes(argNode.getValue());
     if (nodes < 1) nodes = RNG.poisson(50);
